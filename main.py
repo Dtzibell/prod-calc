@@ -1,4 +1,5 @@
-skillPoints = input("Enter the amount of free skill points")
+from copy import copy, deepcopy
+skillPoints = int(input("Enter the amount of free skill points").strip())
 
 class Player:
     def __init__(self, skillPoints):
@@ -29,13 +30,21 @@ class Player:
         self.upgradeCosts[skill] += 1
 
     def decreaseLevel(self, skill):
-        self.skillPoints += self.upgradeCosts[skill] - 1
         self.stats[skill] -= self.STAT_INCREMENTS[skill]
         self.upgradeCosts[skill] -= 1
+        self.skillPoints += self.upgradeCosts[skill]
 
     def level(self, function, skill, amount):
-        for _ in range(amount):
-            function(skill)
+        count = 0
+        try:
+            for _ in range(amount):
+                function(skill)
+                count += 1
+        except ValueError:
+            if function == self.increaseLevel:
+                for _ in range(count):
+                    self.decreaseLevel(skill)
+            raise ValueError
 
     def selfWorkIncome(self):
         entre = self.stats["entre"]
@@ -76,17 +85,18 @@ for entre in range(11):
                         if income > best.income:
                             best.income = income
                             best.prodRatio = prodRatio
-                            best.stats = me.stats
+                            best.stats = deepcopy(me.stats)
                         me.level(me.decreaseLevel, "prod", prod)
                     except ValueError:
-                        pass
+                        continue
                 me.level(me.decreaseLevel, "energy", ener)
             except ValueError:
-                pass
+                continue
         me.level(me.decreaseLevel, "entre", entre)
     except ValueError:
-            pass
+        print("failed")
+        continue
 
-print(best.income, best.prodRatio, me.stats)
+print(best.income, best.prodRatio, best.stats)
 print(me.PP_VALUE * best.prodRatio)
 print(0.087 * best.prodRatio)
