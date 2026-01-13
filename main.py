@@ -1,3 +1,5 @@
+skillPoints = input("Enter the amount of free skill points")
+
 class Player:
     def __init__(self, skillPoints):
         self.stats = {
@@ -59,15 +61,15 @@ class BestResult:
         self.prodRatio = prodRatio
         self.stats = stats
 
-me = Player(22*4 - 21)
+me = Player(skillPoints)
 best = BestResult(-float("inf"), 1., {})
-for entre in range(10):
+for entre in range(11):
     try:
         me.level(me.increaseLevel, "entre", entre)
-        for ener in range(10):
+        for ener in range(11):
             try:
                 me.level(me.increaseLevel, "energy", ener)
-                for prod in range(10):
+                for prod in range(11):
                     try:
                         me.level(me.increaseLevel, "prod", prod)
                         income, prodRatio = me.calculateProfit()
