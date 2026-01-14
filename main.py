@@ -61,17 +61,16 @@ class Player:
         selfWorkIncome = self.selfWorkIncome()
         employerIncome = self.employmentIncome()
         prod = self.stats["prod"]
-        prodRatio = (prod + 10) / prod
-        return selfWorkIncome + employerIncome * prodRatio, prodRatio
+        PROD_RATIO = 1.1
+        return selfWorkIncome + employerIncome * PROD_RATIO
 
 class BestResult:
-    def __init__(self, income, prodRatio, stats):
+    def __init__(self, income, stats):
         self.income = income
-        self.prodRatio = prodRatio
         self.stats = stats
 
 me = Player(skillPoints)
-best = BestResult(-float("inf"), 1., {})
+best = BestResult(-float("inf"), {})
 for entre in range(11):
     try:
         me.level(me.increaseLevel, "entre", entre)
@@ -81,10 +80,9 @@ for entre in range(11):
                 for prod in range(11):
                     try:
                         me.level(me.increaseLevel, "prod", prod)
-                        income, prodRatio = me.calculateProfit()
+                        income = me.calculateProfit()
                         if income > best.income:
                             best.income = income
-                            best.prodRatio = prodRatio
                             best.stats = deepcopy(me.stats)
                         me.level(me.decreaseLevel, "prod", prod)
                     except ValueError:
@@ -97,6 +95,6 @@ for entre in range(11):
         print("failed")
         continue
 
-print(best.income, best.prodRatio, best.stats)
-print(me.PP_VALUE * best.prodRatio)
-print(0.087 * best.prodRatio)
+print(best.income, best.stats)
+print(me.PP_VALUE * 1.1)
+print(0.087 * 1.1)
